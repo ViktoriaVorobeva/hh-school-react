@@ -1,3 +1,5 @@
+import { FormEvent } from "react";
+import { Form, Responce } from "../types";
 import {
     BASE_URL,
     BASE_URL_END
@@ -6,7 +8,7 @@ import {
     saveResultInLocalStorage
 } from "./localStorage";
 
-export const request = (value) => {
+export const request = (value: Form): Promise<Array<Responce>> => {
     const {owner, repo} = value;
     return fetch(`${BASE_URL}${owner}/${repo}${BASE_URL_END}`).then((response) => {
         if (!response.ok) {
@@ -16,9 +18,9 @@ export const request = (value) => {
     });
 };
 
-export const inputHandler = async (e, form, blacklist) => {
+export const inputHandler = async (e: FormEvent, form: Form, blacklist: Array<string>) => {
     e.preventDefault();
-    let contributorsList = [];
+    let contributorsList: Array<Responce> = [];
     try {
         contributorsList = await request(form);
         saveResultInLocalStorage('settings', {...form, blacklist});
@@ -33,7 +35,7 @@ export const inputHandler = async (e, form, blacklist) => {
     }
 };
 
-export const getRandomReviewer = (blacklist, reviewers) => {
+export const getRandomReviewer = (blacklist: Array<string>, reviewers: Array<Responce>) => {
     const possibleReviewers = reviewers.filter(({login}) => !blacklist.includes(login));
     console.log(possibleReviewers)
     if (possibleReviewers.length !== 0) {

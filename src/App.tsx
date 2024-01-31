@@ -1,9 +1,10 @@
-import React, { useEffect, useState, createContext } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Settings from "./components/settings/Settings";
 import { getResultFromLocalStorage } from "./utils/localStorage";
+import { ContextValue } from "./types";
 
-export const SettingsContext = React.createContext(null);
+export const SettingsContext = React.createContext<ContextValue | null>(null);
 
 function App() {
   const [showSetting, setShowSetting] = useState(false);

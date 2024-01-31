@@ -1,28 +1,36 @@
-import { useState, useContext, useRef, useEffect } from "react";
+import { useContext, useRef } from "react";
 import { saveResultInLocalStorage } from "../../utils/localStorage";
 import { SettingsContext } from "../../App";
 import styles from "./blacklist.module.css";
 
 function BlackList() {
-  const { settings, setSettings } = useContext(SettingsContext);
-  const inputRef = useRef(null);
+  const context = useContext(SettingsContext);
 
-  const resetFromBlackList = (e, value) => {
+  if (!context) {
+    return null;
+  }
+
+  const { settings, setSettings } = context;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const resetFromBlackList = (e: React.SyntheticEvent, value: string) => {
     e.preventDefault();
     const blacklist = settings.blacklist.filter((email) => email !== value);
     saveResultInLocalStorage("settings", { ...settings, blacklist });
     setSettings({ ...settings, blacklist });
   };
 
-  const addToBlackList = (e) => {
+  const addToBlackList = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const currentLogin = inputRef.current.value;
+    const currentLogin = inputRef.current?.value;
     if (currentLogin && !settings.blacklist.includes(currentLogin)) {
       settings.blacklist.push(currentLogin);
       saveResultInLocalStorage("settings", settings);
       setSettings(settings);
     }
-    inputRef.current.value = "";
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   return (

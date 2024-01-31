@@ -1,44 +1,53 @@
-import { useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import BlackList from "../blacklist/BlackList";
-import { inputHandler, request } from "../../utils/api";
+import { inputHandler } from "../../utils/api";
 import { SettingsContext } from "../../App";
-import Reviewer from "../reviewer/reviewer";
+import {Reviewer} from "../reviewer/reviewer";
 import styles from "./settings.module.css";
+import { Form, Responce } from "../../types";
 
-const initialForm = {
+const initialForm: Form = {
   owner: "",
   repo: "",
 };
 
 function Settings() {
-  const { settings, setSettings } = useContext(SettingsContext);
+  const context = useContext(SettingsContext);
+
+  if(!context) {
+    return null;
+  }
+
+  const { settings, setSettings } = context;
   const { blacklist } = settings;
   const [form, setValue] = useState(initialForm);
-  const [reviewer, setReviewer] = useState(false);
+  const [reviewer, setReviewer] = useState<boolean | string | Responce>(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [possible, setPossible] = useState([]);
+  const [possible, setPossible] = useState<Responce[]>([]);
 
-  const onChange = (e) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     setValue({ ...form, [target.name]: target.value });
   };
 
-  const submitForm = async (e) => {
+  const submitForm = async (e: FormEvent) => {
     setLoading(true);
     try {
       let currentReviewer;
       const data = await inputHandler(e, form, blacklist);
       if (data.length !== 0) {
-        currentReviewer = data[0];
-        setPossible(data[1]);
+        const [currReviewer, allReviewers] = data
+        currentReviewer = currReviewer;
+        setPossible(allReviewers as Responce[]);
       } else {
         currentReviewer = "";
       }
       setLoading(false);
-      setReviewer(currentReviewer);
+      setReviewer(currentReviewer as Responce);
       setSettings({ ...settings, ...form });
       setValue(initialForm);
+      //@ts-ignore
       e.target.reset();
     } catch (error) {
       setLoading(false);

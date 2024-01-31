@@ -1,10 +1,12 @@
-const initialSettings = {
+import { Settings } from "../types";
+
+const initialSettings: Settings = {
     owner: "",
     repo: "",
     blacklist: [],
   };
 
-const saveResultInLocalStorage = (key, data) => {
+const saveResultInLocalStorage = (key: string, data: Settings) => {
     try {
         localStorage.setItem(key, JSON.stringify(data));
     } catch {
@@ -13,12 +15,12 @@ const saveResultInLocalStorage = (key, data) => {
     }
 }
 
-const getResultFromLocalStorage = (key) => {
+const getResultFromLocalStorage = (key: string) => {
     const value = localStorage.getItem(key);
 
     if (value !== null) {
         try {
-            return JSON.parse(value);
+            return JSON.parse(value) as Settings;
         } catch {
             return initialSettings;
         }
