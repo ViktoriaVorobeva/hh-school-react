@@ -9,4 +9,4 @@ export const Reviewer: React.FC<ReviewerProps> = ({ login, url }) => {
       <a href={url}>{url}</a>
     </div>
   );
-}
+};

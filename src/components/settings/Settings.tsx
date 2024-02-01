@@ -4,13 +4,8 @@ import { inputHandler } from "../../utils/api";
 import { SettingsContext } from "../../App";
 import { Reviewer } from "../reviewer/reviewer";
 import styles from "./settings.module.css";
-import { Form, Responce } from "../../types";
+import { Responce } from "../../types";
 import { User } from "../user/user";
-
-const initialForm: Form = {
-  owner: "",
-  repo: "",
-};
 
 function Settings() {
   const context = useContext(SettingsContext);
@@ -21,7 +16,7 @@ function Settings() {
 
   const { settings, setSettings } = context;
   const { blacklist } = settings;
-  const [form, setValue] = useState(initialForm);
+  const [form, setValue] = useState(settings);
   const [reviewer, setReviewer] = useState<boolean | string | Responce>(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -65,6 +60,7 @@ function Settings() {
             className={styles.input}
             type="text"
             name="owner"
+            value={form.owner}
             placeholder="add your login"
             onChange={onChange}
             required
@@ -75,6 +71,7 @@ function Settings() {
             className={styles.input}
             type="text"
             name="repo"
+            value={form.repo}
             placeholder="add your repo"
             onChange={onChange}
             required

@@ -1,4 +1,4 @@
-export interface Settings {
+export interface SettingsType {
     owner: string;
     repo: string;
     blacklist: Array<string>;
@@ -10,8 +10,8 @@ export interface Form {
 }
 
 export interface ContextValue {
-    settings: Settings;
-    setSettings:  React.Dispatch<React.SetStateAction<Settings>>
+    settings: SettingsType;
+    setSettings:  React.Dispatch<React.SetStateAction<SettingsType>>
 }
 
 export interface Responce {

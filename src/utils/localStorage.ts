@@ -1,34 +1,31 @@
-import { Settings } from "../types";
+import { SettingsType } from "../types";
 
-const initialSettings: Settings = {
-    owner: "",
-    repo: "",
-    blacklist: [],
-  };
+export const initialSettings: SettingsType = {
+  owner: "",
+  repo: "",
+  blacklist: [],
+};
 
-const saveResultInLocalStorage = (key: string, data: Settings) => {
-    try {
-        localStorage.setItem(key, JSON.stringify(data));
-    } catch {
-        localStorage.clear()
-        localStorage.setItem(key, JSON.stringify(data));
-    }
-}
+const saveResultInLocalStorage = (key: string, data: SettingsType) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch {
+    localStorage.clear();
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+};
 
 const getResultFromLocalStorage = (key: string) => {
-    const value = localStorage.getItem(key);
+  const value = localStorage.getItem(key);
 
-    if (value !== null) {
-        try {
-            return JSON.parse(value) as Settings;
-        } catch {
-            return initialSettings;
-        }
+  if (value !== null) {
+    try {
+      return JSON.parse(value) as SettingsType;
+    } catch {
+      return initialSettings;
     }
-    return initialSettings;
-}
+  }
+  return initialSettings;
+};
 
-export {
-    saveResultInLocalStorage,
-    getResultFromLocalStorage
-}
+export { saveResultInLocalStorage, getResultFromLocalStorage };
