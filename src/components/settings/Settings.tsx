@@ -87,19 +87,19 @@ function Settings() {
       !loading &&
       (typeof reviewer === "string" || typeof reviewer === "object") ? (
         typeof reviewer === "object" ? (
-          <>
+          <div className={styles.container}>
             <Reviewer login={reviewer.login} url={reviewer.url} />
             {possible.length !== 0 && (
-              <>
-              <p>All Reviewers:</p>
+              <div>
+              <h2>All Reviewers:</h2>
               <ul>
                 {possible.map(({login}) => (
                   <li key={login}>{login}</li>
                 ))}
               </ul>
-              </>
+              </div>
             )}
-          </>
+          </div>
         ) : (
           <p>Not found Reviewer</p>
         )

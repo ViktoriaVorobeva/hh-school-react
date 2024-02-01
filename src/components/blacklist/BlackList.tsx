@@ -15,7 +15,9 @@ function BlackList() {
 
   const resetFromBlackList = (e: React.SyntheticEvent, value: string) => {
     e.preventDefault();
-    const blacklist = settings.blacklist.filter((email) => email !== value);
+    const blacklist = settings.blacklist.filter(
+      (email: string) => email !== value
+    );
     saveResultInLocalStorage("settings", { ...settings, blacklist });
     setSettings({ ...settings, blacklist });
   };

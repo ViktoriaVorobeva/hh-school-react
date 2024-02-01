@@ -24,9 +24,10 @@ export const inputHandler = async (e: FormEvent, form: Form, blacklist: Array<st
     try {
         contributorsList = await request(form);
         saveResultInLocalStorage('settings', {...form, blacklist});
-        const currentReviewer = getRandomReviewer(blacklist, contributorsList);
+        const possibleReviewers = contributorsList.filter(({login}) => !blacklist.includes(login));
+        const currentReviewer = getRandomReviewer(possibleReviewers);
         if (currentReviewer) {
-            return [currentReviewer, contributorsList];
+            return [currentReviewer, possibleReviewers];
         } else {
             return [];
         }
@@ -35,11 +36,9 @@ export const inputHandler = async (e: FormEvent, form: Form, blacklist: Array<st
     }
 };
 
-export const getRandomReviewer = (blacklist: Array<string>, reviewers: Array<Responce>) => {
-    const possibleReviewers = reviewers.filter(({login}) => !blacklist.includes(login));
-    console.log(possibleReviewers)
-    if (possibleReviewers.length !== 0) {
-        return possibleReviewers[Math.floor(Math.random() * possibleReviewers.length)];
+export const getRandomReviewer = (reviewers: Array<Responce>) => {
+    if (reviewers.length !== 0) {
+        return reviewers[Math.floor(Math.random() * reviewers.length)];
     } 
     return null;
 }
