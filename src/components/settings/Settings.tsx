@@ -4,7 +4,7 @@ import { Reviewer } from "../reviewer/reviewer";
 import styles from "./settings.module.css";
 import { User } from "../user/user";
 import { useDispatch, useSelector } from "../../services/hooks";
-import { getReviewer, getUpdateFromState } from "../../services/actions";
+import { getReviewer, setUpdateFromState } from "../../services/actions";
 import { ReviewersList } from "../reviewersList/reviewersList";
 
 function Settings() {
@@ -20,9 +20,9 @@ function Settings() {
     setValue({ ...form, [target.name]: target.value });
   };
 
-  const submitForm = async (e: FormEvent) => {
+  const submitForm = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(getUpdateFromState(form));
+    dispatch(setUpdateFromState(form));
     dispatch(getReviewer());
   };
 

@@ -35,9 +35,7 @@ export const reviewerReducer = (
         ...state,
         isLoading: false,
         isError: false,
-        //@ts-ignore
         reviewer: action.payload.currentReviewer,
-        //@ts-ignore
         possibleReviewers: action.payload.possibleReviewers,
       };
     case GET_REVIEWER__FAILURE:

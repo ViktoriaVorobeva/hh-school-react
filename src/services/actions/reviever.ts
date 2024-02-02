@@ -1,74 +1,63 @@
-import { Form, SettingsType } from "../../types";
+import { getRandomReviewer, request } from "../../utils/api";
 import {
-  ADD_TO_BLACK_LIST,
-  DELETE_FROM_BLACK_LIST,
-  UPDATE_FROM__LS,
-  UPDATE_FROM__STATE,
+  GET_REVIEWER__REQUEST,
+  GET_REVIEWER__SUCCESS,
+  GET_REVIEWER__FAILURE,
 } from "../constants";
-import {
-    getResultFromLocalStorage,
-    saveResultInLocalStorage,
-  } from "../../utils/localStorage";
+import { AppDispatch, AppThunkAction, TReviewerRequest } from "../types";
+import { saveResultInLocalStorage } from "../../utils/localStorage";
 
-export interface IGetAddToBlackList {
-  readonly type: typeof ADD_TO_BLACK_LIST;
-  readonly payload: string;
+export interface IGetReviewerRequest {
+  readonly type: typeof GET_REVIEWER__REQUEST;
 }
 
-export interface IGetDeletFromBlackList {
-  readonly type: typeof DELETE_FROM_BLACK_LIST;
-  readonly payload: string;
+export interface IGetReviewerSuccess {
+  readonly type: typeof GET_REVIEWER__SUCCESS;
+  readonly payload: TReviewerRequest;
 }
 
-export interface IGetUpdateFromLS {
-  readonly type: typeof UPDATE_FROM__LS;
-  readonly payload: SettingsType;
+export interface IGetReviewerFailure {
+  readonly type: typeof GET_REVIEWER__FAILURE;
 }
 
-export interface IGetUpdateFromState {
-  readonly type: typeof UPDATE_FROM__STATE;
-  readonly payload: Form;
-}
+export type TReviewerAction =
+  | IGetReviewerRequest
+  | IGetReviewerSuccess
+  | IGetReviewerFailure;
 
-export type TSettingsAction =
-  | IGetAddToBlackList
-  | IGetDeletFromBlackList
-  | IGetUpdateFromLS
-  | IGetUpdateFromState;
+export const getReviewerAction = (): IGetReviewerRequest => ({
+  type: GET_REVIEWER__REQUEST,
+});
 
-export const addToBlackListAction = (login: string): IGetAddToBlackList => {
-  const settings = getResultFromLocalStorage("settings");
-  const { blacklist } = settings;
-  saveResultInLocalStorage("settings", {
-    ...settings,
-    blacklist: [...blacklist, login],
-  });
-  return {
-    type: ADD_TO_BLACK_LIST,
-    payload: login,
+export const getReviewerSuccessAction = (
+  reviewersObj: TReviewerRequest
+): IGetReviewerSuccess => ({
+  type: GET_REVIEWER__SUCCESS,
+  payload: reviewersObj,
+});
+
+export const getReviewerFailureAction = (): IGetReviewerFailure => ({
+  type: GET_REVIEWER__FAILURE,
+});
+
+export const getReviewer = (): AppThunkAction => {
+  return async function (dispatch: AppDispatch, getState) {
+    const { settings } = getState();
+    const { owner, repo, blacklist } = settings;
+
+    dispatch(getReviewerAction());
+    let revieversList;
+    try {
+      revieversList = await request({ owner, repo });
+    } catch {
+      dispatch(getReviewerFailureAction());
+      return;
+    }
+    const possibleReviewers = revieversList.filter(
+      ({ login }) => !blacklist.includes(login)
+    );
+    const currentReviewer = getRandomReviewer(possibleReviewers);
+    dispatch(getReviewerSuccessAction({ currentReviewer, possibleReviewers }));
+    saveResultInLocalStorage("settings", { owner, repo, blacklist });
   };
 };
-
-export const deleteFromBlackList = (login: string): IGetDeletFromBlackList => {
-  const settings = getResultFromLocalStorage("settings");
-  const { blacklist } = settings;
-  const newBlacklist = blacklist.filter((email) => email !== login);
-  saveResultInLocalStorage("settings", {
-    ...settings,
-    blacklist: newBlacklist,
-  });
-  return {
-    type: DELETE_FROM_BLACK_LIST,
-    payload: login,
-  };
-};
-
-export const getUpdateFromLS = (settings: SettingsType): IGetUpdateFromLS => ({
-    type: UPDATE_FROM__LS,
-    payload: settings,
-  });
-  
-  export const getUpdateFromState = (form: Form): IGetUpdateFromState => ({
-    type: UPDATE_FROM__STATE,
-    payload: form,
-  });

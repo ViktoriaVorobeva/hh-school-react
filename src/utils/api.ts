@@ -9,8 +9,8 @@ export const request = (value: Form): Promise<Array<User>> => {
         return Promise.reject(response);
       }
       return response.json();
-    }, 
-  ).catch((reason) => Promise.reject(reason));
+    }
+  );
 };
 
 export const getRandomReviewer = (reviewers: Array<User>) => {

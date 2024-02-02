@@ -3,7 +3,7 @@ import "./App.css";
 import Settings from "./components/settings/Settings";
 import { getResultFromLocalStorage } from "./utils/localStorage";
 import { useDispatch } from "./services/hooks";
-import { getUpdateFromLS } from "./services/actions";
+import { setUpdateFromLS } from "./services/actions";
 
 function App() {
   const [showSetting, setShowSetting] = useState(false);
@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     const settingsLS = getResultFromLocalStorage("settings");
-    dispatch(getUpdateFromLS(settingsLS));
+    dispatch(setUpdateFromLS(settingsLS));
   }, []);
 
   return (
