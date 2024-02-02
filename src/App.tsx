@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import Settings from "./components/settings/Settings";
-import { getResultFromLocalStorage, initialSettings } from "./utils/localStorage";
-import { ContextValue, SettingsType } from "./types";
+import { getResultFromLocalStorage } from "./utils/localStorage";
+import { ContextValue } from "./types";
+import { useDispatch, useSelector } from "./services/hooks";
+import { getUpdateFromLS } from "./services/actions";
 
 export const SettingsContext = React.createContext<ContextValue | null>(null);
 
 function App() {
+  const settings = useSelector((store) => store.reviewerState)
   const [showSetting, setShowSetting] = useState(false);
-  const [settings, setSettings] = useState<SettingsType>(initialSettings);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setSettings(getResultFromLocalStorage("settings"))
+    const settingsLS = getResultFromLocalStorage('settings');
+    dispatch(getUpdateFromLS(settingsLS));
   }, [])
   
   return (
-    <SettingsContext.Provider value={{ settings, setSettings }}>
+    <SettingsContext.Provider value={{ settings }}>
       {!showSetting && (
         <button type="button" onClick={() => setShowSetting(!showSetting)}>
           Click for see settings

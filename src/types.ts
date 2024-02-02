@@ -11,10 +11,9 @@ export interface Form {
 
 export interface ContextValue {
     settings: SettingsType;
-    setSettings:  React.Dispatch<React.SetStateAction<SettingsType>>
 }
 
-export interface Responce {
+export interface ResponceOk {
     login: string,
     url: string
 }
