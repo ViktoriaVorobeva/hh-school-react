@@ -1,4 +1,4 @@
-import { ResponceOk } from "../../types";
+import { User } from "../../types";
 import { TAllActions } from "../actions";
 import { store } from "../store";
 import type { ThunkAction, ThunkDispatch } from "redux-thunk";
@@ -19,6 +19,6 @@ export type AppThunkAction<ReturnType = void> = ThunkAction<
 >;
 
 export type TReviewerRequest = {
-  currentReviewer: ResponceOk | null,
-  possibleReviewers: ResponceOk[]
+  currentReviewer: User | null,
+  possibleReviewers: User[]
 }

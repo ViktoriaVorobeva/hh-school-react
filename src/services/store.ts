@@ -1,6 +1,7 @@
 import { combineReducers, createStore, applyMiddleware, compose } from "redux";
 import {thunk} from "redux-thunk";
 import { reviewerReducer } from "./reducers";
+import { settingsReducer } from "./reducers/settings";
 
 declare global {
   interface Window {
@@ -13,7 +14,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const enhancer = composeEnhancers(applyMiddleware(thunk));
 
 const rootReduces = combineReducers({
-  reviewerState: reviewerReducer,
+  reviewer: reviewerReducer,
+  settings: settingsReducer
 });
 
 export const store = createStore(rootReduces, {}, enhancer);

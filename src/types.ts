@@ -9,16 +9,7 @@ export interface Form {
     repo: string;
 }
 
-export interface ContextValue {
-    settings: SettingsType;
-}
-
-export interface ResponceOk {
-    login: string,
-    url: string
-}
-
-export type ReviewerProps = {
+export type User = {
     login: string
     url: string
 }

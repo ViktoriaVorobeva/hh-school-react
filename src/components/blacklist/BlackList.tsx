@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "../../services/hooks";
 import { addToBlackListAction, deleteFromBlackList } from "../../services/actions";
 
 function BlackList() {
-  const {blacklist} = useSelector((store) => store.reviewerState);
+  const {blacklist} = useSelector((store) => store.settings);
 
   const dispatch = useDispatch();
 

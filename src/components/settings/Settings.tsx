@@ -4,18 +4,14 @@ import { Reviewer } from "../reviewer/reviewer";
 import styles from "./settings.module.css";
 import { User } from "../user/user";
 import { useDispatch, useSelector } from "../../services/hooks";
-import { getReviewer } from "../../services/actions";
+import { getReviewer, getUpdateFromState } from "../../services/actions";
+import { ReviewersList } from "../reviewersList/reviewersList";
 
 function Settings() {
-  const {
-    blacklist,
-    owner,
-    repo,
-    isLoading,
-    errors,
-    reviewer,
-    possibleReviewers,
-  } = useSelector((store) => store.reviewerState);
+  const { isLoading, isError, possibleReviewers } = useSelector(
+    (store) => store.reviewer
+  );
+  const { blacklist, owner, repo } = useSelector((store) => store.settings);
   const [form, setValue] = useState({ owner, repo });
   const dispatch = useDispatch();
 
@@ -26,7 +22,8 @@ function Settings() {
 
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
-    dispatch(getReviewer(form, blacklist));
+    dispatch(getUpdateFromState(form));
+    dispatch(getReviewer());
   };
 
   return (
@@ -57,34 +54,18 @@ function Settings() {
         <BlackList />
         <button type="submit">Find reviewer</button>
       </form>
-      {!errors &&
-      !isLoading &&
-      (typeof reviewer === "string" || typeof reviewer === "object") ? (
-        typeof reviewer === "object" &&  reviewer !== null ? (
-          <div className={styles.container}>
-            <User owner={form.owner} repo={form.repo} />
-            <Reviewer login={reviewer.login} url={reviewer.url} />
-            {possibleReviewers.length !== 0 && (
-              <div>
-                <h2>All Reviewers:</h2>
-                <ul>
-                  {possibleReviewers.map(({ login }) => (
-                    <li key={login}>{login}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className={styles.container}>
-            <User owner={form.owner} repo={form.repo} />
+      {!isError && !isLoading && (
+        <div className={styles.container}>
+          {owner && repo && <User owner={form.owner} repo={form.repo} />}
+          <Reviewer />
+          {possibleReviewers.length !== 0 ? (
+            <ReviewersList />
+          ) : (
             <p>Not found Reviewer</p>
-          </div>
-        )
-      ) : (
-        ""
+          )}
+        </div>
       )}
-      {errors && (
+      {isError && (
         <p className={styles.error}>
           Произошла ошибка! Обновите страницу/попробуйте отправить запрос позже
         </p>
