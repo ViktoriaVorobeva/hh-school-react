@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Settings from "./components/settings/Settings";
 import { getResultFromLocalStorage } from "./utils/localStorage";

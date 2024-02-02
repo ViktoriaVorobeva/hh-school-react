@@ -11,7 +11,7 @@ function Settings() {
   const { isLoading, isError, possibleReviewers } = useSelector(
     (store) => store.reviewer
   );
-  const { blacklist, owner, repo } = useSelector((store) => store.settings);
+  const { owner, repo } = useSelector((store) => store.settings);
   const [form, setValue] = useState({ owner, repo });
   const dispatch = useDispatch();
 

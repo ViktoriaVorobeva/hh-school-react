@@ -4,7 +4,7 @@ import styles from "./reviewer.module.css";
 export const Reviewer = () => {
   const { reviewer } = useSelector((store) => store.reviewer);
   if (!reviewer) {
-    return;
+    return null;
   }
   return (
     <div className={styles.container}>
