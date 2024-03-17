@@ -9,17 +9,7 @@ export interface Form {
     repo: string;
 }
 
-export interface ContextValue {
-    settings: SettingsType;
-    setSettings:  React.Dispatch<React.SetStateAction<SettingsType>>
-}
-
-export interface Responce {
-    login: string,
-    url: string
-}
-
-export type ReviewerProps = {
+export type User = {
     login: string
     url: string
 }

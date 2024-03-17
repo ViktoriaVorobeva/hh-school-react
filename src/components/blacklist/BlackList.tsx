@@ -1,35 +1,27 @@
-import { useContext, useRef } from "react";
-import { saveResultInLocalStorage } from "../../utils/localStorage";
-import { SettingsContext } from "../../App";
+import { useRef } from "react";
 import styles from "./blacklist.module.css";
+import { useDispatch, useSelector } from "../../services/hooks";
+import { addToBlackListAction, deleteFromBlackList } from "../../services/actions";
 
 function BlackList() {
-  const context = useContext(SettingsContext);
+  const {blacklist} = useSelector((store) => store.settings);
 
-  if (!context) {
-    return null;
-  }
+  const dispatch = useDispatch();
 
-  const { settings, setSettings } = context;
   const inputRef = useRef<HTMLInputElement>(null);
 
   const resetFromBlackList = (e: React.SyntheticEvent, value: string) => {
     e.preventDefault();
-    const blacklist = settings.blacklist.filter(
-      (email: string) => email !== value
-    );
-    saveResultInLocalStorage("settings", { ...settings, blacklist });
-    setSettings({ ...settings, blacklist });
+    dispatch(deleteFromBlackList(value))
   };
 
   const addToBlackList = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const currentLogin = inputRef.current?.value;
-    if (currentLogin && !settings.blacklist.includes(currentLogin)) {
-      settings.blacklist.push(currentLogin);
-      saveResultInLocalStorage("settings", settings);
-      setSettings(settings);
+    if (currentLogin && !blacklist.includes(currentLogin)) {
+      dispatch(addToBlackListAction(currentLogin));
     }
+
     if (inputRef.current) {
       inputRef.current.value = "";
     }
@@ -55,9 +47,9 @@ function BlackList() {
           Add to blacklist
         </button>
       </div>
-      {settings.blacklist.length !== 0 && (
+      {blacklist.length !== 0 && (
         <ul>
-          {settings.blacklist.map((email) => (
+          {blacklist.map((email) => (
             <li key={email}>
               {email}
               <button

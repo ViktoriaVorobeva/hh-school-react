@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Settings from "./components/settings/Settings";
-import { getResultFromLocalStorage, initialSettings } from "./utils/localStorage";
-import { ContextValue, SettingsType } from "./types";
-
-export const SettingsContext = React.createContext<ContextValue | null>(null);
+import { getResultFromLocalStorage } from "./utils/localStorage";
+import { useDispatch } from "./services/hooks";
+import { setUpdateFromLS } from "./services/actions";
 
 function App() {
   const [showSetting, setShowSetting] = useState(false);
-  const [settings, setSettings] = useState<SettingsType>(initialSettings);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setSettings(getResultFromLocalStorage("settings"))
-  }, [])
-  
+    const settingsLS = getResultFromLocalStorage("settings");
+    dispatch(setUpdateFromLS(settingsLS));
+  }, []);
+
   return (
-    <SettingsContext.Provider value={{ settings, setSettings }}>
+    <>
       {!showSetting && (
         <button type="button" onClick={() => setShowSetting(!showSetting)}>
           Click for see settings
         </button>
       )}
       {showSetting && <Settings />}
-    </SettingsContext.Provider>
+    </>
   );
 }
 

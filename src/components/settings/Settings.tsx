@@ -1,55 +1,29 @@
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import BlackList from "../blacklist/BlackList";
-import { inputHandler } from "../../utils/api";
-import { SettingsContext } from "../../App";
 import { Reviewer } from "../reviewer/reviewer";
 import styles from "./settings.module.css";
-import { Responce } from "../../types";
 import { User } from "../user/user";
+import { useDispatch, useSelector } from "../../services/hooks";
+import { getReviewer, setUpdateFromState } from "../../services/actions";
+import { ReviewersList } from "../reviewersList/reviewersList";
 
 function Settings() {
-  const context = useContext(SettingsContext);
-
-  if (!context) {
-    return null;
-  }
-
-  const { settings, setSettings } = context;
-  const { blacklist } = settings;
-  const [form, setValue] = useState(settings);
-  const [reviewer, setReviewer] = useState<boolean | string | Responce>(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [possible, setPossible] = useState<Responce[]>([]);
+  const { isLoading, isError, possibleReviewers } = useSelector(
+    (store) => store.reviewer
+  );
+  const { owner, repo } = useSelector((store) => store.settings);
+  const [form, setValue] = useState({ owner, repo });
+  const dispatch = useDispatch();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     setValue({ ...form, [target.name]: target.value });
   };
 
-  const submitForm = async (e: FormEvent) => {
-    setLoading(true);
-    try {
-      let currentReviewer;
-      const data = await inputHandler(e, form, blacklist);
-      if (data.length !== 0) {
-        const [currReviewer, allReviewers] = data;
-        currentReviewer = currReviewer;
-        setPossible(allReviewers as Responce[]);
-      } else {
-        currentReviewer = "";
-      }
-      setLoading(false);
-      setReviewer(currentReviewer as Responce);
-      setSettings({ ...settings, ...form });
-      //@ts-ignore
-      e.target.reset();
-    } catch (error) {
-      setLoading(false);
-      setError(true);
-      setReviewer(false);
-      setTimeout(() => setError(false), 1500);
-    }
+  const submitForm = (e: FormEvent) => {
+    e.preventDefault();
+    dispatch(setUpdateFromState(form));
+    dispatch(getReviewer());
   };
 
   return (
@@ -80,39 +54,23 @@ function Settings() {
         <BlackList />
         <button type="submit">Find reviewer</button>
       </form>
-      {!error &&
-      !loading &&
-      (typeof reviewer === "string" || typeof reviewer === "object") ? (
-        typeof reviewer === "object" ? (
-          <div className={styles.container}>
-            <User owner={form.owner} repo={form.repo} />
-            <Reviewer login={reviewer.login} url={reviewer.url} />
-            {possible.length !== 0 && (
-              <div>
-                <h2>All Reviewers:</h2>
-                <ul>
-                  {possible.map(({ login }) => (
-                    <li key={login}>{login}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className={styles.container}>
-            <User owner={form.owner} repo={form.repo} />
+      {!isError && !isLoading && (
+        <div className={styles.container}>
+          {owner && repo && <User owner={form.owner} repo={form.repo} />}
+          <Reviewer />
+          {possibleReviewers.length !== 0 ? (
+            <ReviewersList />
+          ) : (
             <p>Not found Reviewer</p>
-          </div>
-        )
-      ) : (
-        ""
+          )}
+        </div>
       )}
-      {error && (
+      {isError && (
         <p className={styles.error}>
           Произошла ошибка! Обновите страницу/попробуйте отправить запрос позже
         </p>
       )}
-      {loading && <p>loading...</p>}
+      {isLoading && <p>loading...</p>}
     </>
   );
 }
